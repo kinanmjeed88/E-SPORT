@@ -1,0 +1,85 @@
+---
+layout: default
+---
+
+<!-- Hero / Featured -->
+<div class="text-center mb-16">
+  <h2 class="text-3xl md:text-5xl font-bold text-white mb-4">Latest E-Sports News</h2>
+  <p class="text-slate-400 text-lg max-w-2xl mx-auto">{{ site.description }}</p>
+</div>
+
+<!-- Grid Layout -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+  {% for post in paginator.posts %}
+  <div class="bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-700 group">
+    
+    {% if post.image %}
+    <div class="h-48 overflow-hidden relative">
+      <img src="{{ post.image }}" alt="{{ post.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+      <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
+    </div>
+    {% else %}
+    <div class="h-48 bg-slate-700 flex items-center justify-center">
+      <span class="text-slate-500 text-4xl">🎮</span>
+    </div>
+    {% endif %}
+
+    <div class="p-6">
+      <div class="flex items-center justify-between mb-3">
+        <span class="text-xs font-bold text-blue-400 uppercase tracking-wider">News</span>
+        <span class="text-xs text-slate-500">{{ post.date | date: "%b %d, %Y" }}</span>
+      </div>
+      
+      <h3 class="text-xl font-bold text-white mb-2 line-clamp-2 group-hover:text-blue-400 transition-colors">
+        <a href="{{ post.url }}">{{ post.title }}</a>
+      </h3>
+      
+      <p class="text-slate-400 text-sm mb-4 line-clamp-3">
+        {{ post.description | default: post.excerpt }}
+      </p>
+      
+      <a href="{{ post.url }}" class="inline-flex items-center text-sm font-semibold text-blue-500 hover:text-blue-400 transition-colors">
+        Read Article 
+        <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+      </a>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Pagination -->
+{% if paginator.total_pages > 1 %}
+<div class="mt-16 flex justify-center space-x-4">
+  {% if paginator.previous_page %}
+    <a href="{{ paginator.previous_page_path }}" class="px-6 py-3 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors border border-slate-700">← Previous</a>
+  {% endif %}
+  
+  <span class="px-4 py-3 text-slate-500">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
+  
+  {% if paginator.next_page %}
+    <a href="{{ paginator.next_page_path }}" class="px-6 py-3 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors border border-slate-700">Next →</a>
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- Preview Warning (Only visible in dev environment/preview) -->
+<script>
+  if (window.location.hostname.includes('run.app') || window.location.hostname.includes('localhost')) {
+    document.body.innerHTML = `
+      <div class="min-h-screen bg-slate-900 flex items-center justify-center p-4">
+        <div class="max-w-md bg-slate-800 p-8 rounded-xl border border-red-500/50 shadow-2xl text-center">
+          <h1 class="text-2xl font-bold text-red-500 mb-4">Jekyll Preview Unavailable</h1>
+          <p class="text-slate-300 mb-6">
+            This page contains Liquid tags (<code>{% for ... %}</code>) which require the Jekyll build engine on GitHub Pages. They cannot be rendered in this preview environment.
+          </p>
+          <a href="/cms.html" class="inline-block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+            Go to CMS Dashboard
+          </a>
+          <p class="mt-4 text-xs text-slate-500">
+            Deploy this repo to GitHub to see the actual site.
+          </p>
+        </div>
+      </div>
+    `;
+  }
+</script>

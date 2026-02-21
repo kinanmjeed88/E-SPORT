@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMS - E SPORT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        esport: {
+                            900: '#0f172a',
+                            800: '#1e293b',
+                            500: '#3b82f6',
+                            accent: '#ef4444'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #0f172a; color: #e2e8f0; }
+        .input-field {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        .input-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            ring: 2px solid #3b82f6;
+        }
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary { background-color: #3b82f6; color: white; }
+        .btn-primary:hover { background-color: #2563eb; }
+        .btn-success { background-color: #10b981; color: white; }
+        .btn-success:hover { background-color: #059669; }
+    </style>
+</head>
+<body class="min-h-screen p-8">
+
+    <div class="max-w-4xl mx-auto">
+        <header class="flex justify-between items-center mb-10 border-b border-gray-700 pb-6">
+            <h1 class="text-3xl font-bold text-blue-500">E-SPORT CMS</h1>
+            <div id="connection-status" class="text-sm text-gray-400">Not Connected</div>
+        </header>
+
+        <!-- Connection Settings -->
+        <section id="settings-section" class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8">
+            <h2 class="text-xl font-bold mb-4 text-white flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                GitHub Connection
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <input type="text" id="gh-username" placeholder="GitHub Username" class="input-field">
+                <input type="text" id="gh-repo" placeholder="Repository Name" class="input-field">
+            </div>
+            <input type="password" id="gh-token" placeholder="Personal Access Token (PAT)" class="input-field">
+            <button onclick="saveSettings()" class="btn btn-primary w-full">Save & Connect</button>
+        </section>
+
+        <!-- Site Management -->
+        <section id="site-config-section" class="bg-gray-800 p-6 rounded-xl shadow-lg mb-8 hidden">
+            <h2 class="text-xl font-bold mb-4 text-white flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                Site Configuration
+            </h2>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Site Title</label>
+                <input type="text" id="site-title" class="input-field">
+            </div>
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Upload Logo</label>
+                <input type="file" id="site-logo" class="input-field" accept="image/*">
+            </div>
+            <button onclick="updateSiteConfig()" class="btn btn-primary">Update Configuration</button>
+        </section>
+
+        <!-- Post Creation -->
+        <section id="post-section" class="bg-gray-800 p-6 rounded-xl shadow-lg hidden">
+            <h2 class="text-xl font-bold mb-4 text-white flex items-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                New Post
+            </h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium mb-1">Title</label>
+                    <input type="text" id="post-title" class="input-field" oninput="generateSlug()">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-1">Custom Slug (URL)</label>
+                    <input type="text" id="post-slug" class="input-field">
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Description</label>
+                <textarea id="post-description" class="input-field h-20"></textarea>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Cover Image</label>
+                <input type="file" id="post-image" class="input-field" accept="image/*">
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium mb-1">Content (Markdown)</label>
+                <textarea id="post-content" class="input-field h-64 font-mono text-sm"></textarea>
+            </div>
+
+            <button onclick="publishPost()" class="btn btn-success w-full text-lg">Publish Post</button>
+        </section>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-blue-600 text-white px-6 py-3 rounded-lg shadow-xl transform translate-y-20 transition-transform duration-300">
+        Notification
+    </div>
+
+    <script type="module">
+        import jsYaml from 'js-yaml';
+        window.jsYaml = jsYaml;
+    </script>
+
+    <script>
+        // --- State Management ---
+        const state = {
+            username: '',
+            repo: '',
+            token: ''
+        };
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+        });
+
+        function loadSettings() {
+            state.username = localStorage.getItem('gh_username') || '';
+            state.repo = localStorage.getItem('gh_repo') || '';
+            state.token = localStorage.getItem('gh_token') || '';
+
+            document.getElementById('gh-username').value = state.username;
+            document.getElementById('gh-repo').value = state.repo;
+            document.getElementById('gh-token').value = state.token;
+
+            if (state.username && state.repo && state.token) {
+                document.getElementById('connection-status').innerHTML = `<span class="text-green-400">● Connected to ${state.repo}</span>`;
+                document.getElementById('site-config-section').classList.remove('hidden');
+                document.getElementById('post-section').classList.remove('hidden');
+                fetchSiteConfig();
+            }
+        }
+
+        window.saveSettings = function() {
+            const username = document.getElementById('gh-username').value.trim();
+            const repo = document.getElementById('gh-repo').value.trim();
+            const token = document.getElementById('gh-token').value.trim();
+
+            if (!username || !repo || !token) {
+                showToast('Please fill all fields', 'error');
+                return;
+            }
+
+            localStorage.setItem('gh_username', username);
+            localStorage.setItem('gh_repo', repo);
+            localStorage.setItem('gh_token', token);
+
+            loadSettings();
+            showToast('Settings saved successfully!');
+        };
+
+        window.generateSlug = function() {
+            const title = document.getElementById('post-title').value;
+            const slug = title.toLowerCase()
+                .replace(/[^\w\s-]/g, '')
+                .replace(/\s+/g, '-');
+            document.getElementById('post-slug').value = slug;
+        };
+
+        // --- GitHub API Interactions ---
+
+        async function githubRequest(path, method = 'GET', body = null) {
+            const url = `https://api.github.com/repos/${state.username}/${state.repo}/contents/${path}`;
+            const headers = {
+                'Authorization': `token ${state.token}`,
+                'Content-Type': 'application/json',
+                'Accept': 'application/vnd.github.v3+json'
+            };
+
+            const options = { method, headers };
+            if (body) options.body = JSON.stringify(body);
+
+            const response = await fetch(url, options);
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.message || 'GitHub API Error');
+            }
+            return response.json();
+        }
+
+        async function fetchSiteConfig() {
+            try {
+                const data = await githubRequest('_config.yml');
+                const content = atob(data.content);
+                // Simple regex parsing for title to avoid heavy deps if jsYaml fails
+                const titleMatch = content.match(/title:\s*(.*)/);
+                if (titleMatch) {
+                    document.getElementById('site-title').value = titleMatch[1].trim();
+                }
+                window.currentConfigSha = data.sha;
+                window.currentConfigContent = content;
+            } catch (error) {
+                console.error('Error fetching config:', error);
+                // Don't block UI, config might not exist yet
+            }
+        }
+
+        window.updateSiteConfig = async function() {
+            const newTitle = document.getElementById('site-title').value;
+            const logoFile = document.getElementById('site-logo').files[0];
+
+            try {
+                showToast('Updating configuration...', 'info');
+
+                // 1. Upload Logo if selected
+                if (logoFile) {
+                    const logoContent = await toBase64(logoFile);
+                    await uploadFile(`assets/images/logo-${Date.now()}.png`, logoContent, 'Update site logo');
+                    // Note: In a real app we'd update the config to point to this new logo
+                }
+
+                // 2. Update _config.yml
+                let newConfig = window.currentConfigContent;
+                if (newConfig) {
+                    newConfig = newConfig.replace(/title: .*/, `title: ${newTitle}`);
+                } else {
+                    newConfig = `title: ${newTitle}\n`;
+                }
+
+                await uploadFile('_config.yml', btoa(newConfig), 'Update site title', window.currentConfigSha);
+                
+                showToast('Site configuration updated!');
+                fetchSiteConfig(); // Refresh SHA
+            } catch (error) {
+                showToast(`Error: ${error.message}`, 'error');
+            }
+        };
+
+        window.publishPost = async function() {
+            const title = document.getElementById('post-title').value;
+            const slug = document.getElementById('post-slug').value;
+            const description = document.getElementById('post-description').value;
+            const content = document.getElementById('post-content').value;
+            const imageFile = document.getElementById('post-image').files[0];
+
+            if (!title || !slug || !content) {
+                showToast('Please fill required fields', 'error');
+                return;
+            }
+
+            try {
+                showToast('Publishing...', 'info');
+
+                let imageUrl = '';
+                // 1. Upload Image
+                if (imageFile) {
+                    const imageBase64 = await toBase64(imageFile);
+                    const imagePath = `assets/images/${Date.now()}-${imageFile.name}`;
+                    await uploadFile(imagePath, imageBase64, `Upload cover for ${slug}`);
+                    imageUrl = `/${imagePath}`;
+                }
+
+                // 2. Create Front Matter + Content
+                const date = new Date().toISOString().split('T')[0];
+                const fileContent = `---
+layout: post
+title: "${title}"
+description: "${description}"
+date: ${date}
+image: "${imageUrl}"
+---
+
+${content}`;
+
+                // 3. Upload Post
+                const filename = `_posts/${date}-${slug}.md`;
+                await uploadFile(filename, btoa(unescape(encodeURIComponent(fileContent))), `Create post: ${title}`);
+
+                showToast('Post published successfully!');
+                
+                // Clear form
+                document.getElementById('post-title').value = '';
+                document.getElementById('post-slug').value = '';
+                document.getElementById('post-description').value = '';
+                document.getElementById('post-content').value = '';
+                document.getElementById('post-image').value = '';
+
+            } catch (error) {
+                showToast(`Error: ${error.message}`, 'error');
+            }
+        };
+
+        // --- Helpers ---
+
+        async function uploadFile(path, content, message, sha = null) {
+            const body = {
+                message: message,
+                content: content // Content must be Base64 encoded
+            };
+            if (sha) body.sha = sha;
+
+            // Check if file exists to get SHA if not provided (for overwrites)
+            if (!sha) {
+                try {
+                    const existing = await githubRequest(path);
+                    body.sha = existing.sha;
+                } catch (e) {
+                    // File doesn't exist, proceed with creation
+                }
+            }
+
+            return githubRequest(path, 'PUT', body);
+        }
+
+        function toBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `fixed bottom-5 right-5 px-6 py-3 rounded-lg shadow-xl transform transition-transform duration-300 ${type === 'error' ? 'bg-red-600' : 'bg-blue-600'} text-white`;
+            toast.style.transform = 'translateY(0)';
+            setTimeout(() => {
+                toast.style.transform = 'translateY(150%)';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

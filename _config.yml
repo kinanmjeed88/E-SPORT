@@ -1,0 +1,13 @@
+name: E SPORT
+title: E SPORT
+description: The best source for E-Sports news.
+url: ""
+baseurl: ""
+paginate: 10
+paginate_path: "/page:num/"
+markdown: kramdown
+theme: minima
+plugins:
+  - jekyll-paginate
+
+logo: "/assets/images/logo.png"
