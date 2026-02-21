@@ -188,7 +188,9 @@
         window.generateSlug = function() {
             const title = document.getElementById('post-title').value;
             const slug = title.toLowerCase()
-                .replace(/[^\w\s-]/g, '')
+                // Allow Arabic characters, Latin characters, numbers, spaces, and hyphens
+                .replace(/[^\w\s\-\u0600-\u06FF]/g, '')
+                .trim()
                 .replace(/\s+/g, '-');
             document.getElementById('post-slug').value = slug;
         };
@@ -264,7 +266,7 @@
 
         window.publishPost = async function() {
             const title = document.getElementById('post-title').value;
-            const slug = document.getElementById('post-slug').value;
+            let slug = document.getElementById('post-slug').value;
             const description = document.getElementById('post-description').value;
             const content = document.getElementById('post-content').value;
             const imageFile = document.getElementById('post-image').files[0];
@@ -274,6 +276,13 @@
                 return;
             }
 
+            // Ensure slug doesn't have spaces if user manually typed them
+            slug = slug.trim().replace(/\s+/g, '-');
+            
+            // Escape quotes for YAML
+            const safeTitle = title.replace(/"/g, '\\"');
+            const safeDesc = description.replace(/"/g, '\\"');
+
             try {
                 showToast('Publishing...', 'info');
 
@@ -281,7 +290,9 @@
                 // 1. Upload Image
                 if (imageFile) {
                     const imageBase64 = await toBase64(imageFile);
-                    const imagePath = `assets/images/${Date.now()}-${imageFile.name}`;
+                    // Remove spaces and parentheses from image name to avoid markdown issues
+                    const safeImageName = imageFile.name.replace(/[^a-zA-Z0-9.\-]/g, '_');
+                    const imagePath = `assets/images/${Date.now()}-${safeImageName}`;
                     await uploadFile(imagePath, imageBase64, `Upload cover for ${slug}`);
                     imageUrl = `/${imagePath}`;
                 }
@@ -290,8 +301,8 @@
                 const date = new Date().toISOString().split('T')[0];
                 const fileContent = `---
 layout: post
-title: "${title}"
-description: "${description}"
+title: "${safeTitle}"
+description: "${safeDesc}"
 date: ${date}
 image: "${imageUrl}"
 ---
