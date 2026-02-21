@@ -9,13 +9,15 @@ layout: default
 </div>
 
 <!-- Grid Layout -->
+{% assign display_posts = paginator.posts | default: site.posts %}
+{% if display_posts.size > 0 %}
 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-  {% for post in paginator.posts %}
+  {% for post in display_posts %}
   <div class="bg-slate-800 rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-slate-700 group">
     
     {% if post.image %}
     <div class="h-48 overflow-hidden relative">
-      <img src="{{ post.image }}" alt="{{ post.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+      <img src="{{ post.image | relative_url }}" alt="{{ post.title }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
       <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition-colors"></div>
     </div>
     {% else %}
@@ -30,15 +32,15 @@ layout: default
         <span class="text-xs text-slate-500">{{ post.date | date: "%b %d, %Y" }}</span>
       </div>
       
-      <h3 class="text-xl font-bold text-white mb-2 line-clamp-2 group-hover:text-blue-400 transition-colors">
-        <a href="{{ post.url }}">{{ post.title }}</a>
+      <h3 class="text-xl font-bold text-white mb-2 line-clamp-2 group-hover:text-blue-400 transition-colors" dir="auto">
+        <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
       </h3>
       
-      <p class="text-slate-400 text-sm mb-4 line-clamp-3">
+      <p class="text-slate-400 text-sm mb-4 line-clamp-3" dir="auto">
         {{ post.description | default: post.excerpt }}
       </p>
       
-      <a href="{{ post.url }}" class="inline-flex items-center text-sm font-semibold text-blue-500 hover:text-blue-400 transition-colors">
+      <a href="{{ post.url | relative_url }}" class="inline-flex items-center text-sm font-semibold text-blue-500 hover:text-blue-400 transition-colors">
         Read Article 
         <svg class="w-4 h-4 ml-1 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
       </a>
@@ -46,18 +48,25 @@ layout: default
   </div>
   {% endfor %}
 </div>
+{% else %}
+<div class="text-center py-16 bg-slate-800 rounded-xl border border-slate-700">
+  <span class="text-6xl mb-4 block">📭</span>
+  <h3 class="text-2xl font-bold text-white mb-2">لا توجد منشورات بعد</h3>
+  <p class="text-slate-400">لم يتم العثور على أي مقالات. تأكد من نشر مقال جديد عبر لوحة التحكم.</p>
+</div>
+{% endif %}
 
 <!-- Pagination -->
 {% if paginator.total_pages > 1 %}
 <div class="mt-16 flex justify-center space-x-4">
   {% if paginator.previous_page %}
-    <a href="{{ paginator.previous_page_path }}" class="px-6 py-3 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors border border-slate-700">← Previous</a>
+    <a href="{{ paginator.previous_page_path | relative_url }}" class="px-6 py-3 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors border border-slate-700">← Previous</a>
   {% endif %}
   
   <span class="px-4 py-3 text-slate-500">Page {{ paginator.page }} of {{ paginator.total_pages }}</span>
   
   {% if paginator.next_page %}
-    <a href="{{ paginator.next_page_path }}" class="px-6 py-3 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors border border-slate-700">Next →</a>
+    <a href="{{ paginator.next_page_path | relative_url }}" class="px-6 py-3 bg-slate-800 text-white rounded-lg hover:bg-slate-700 transition-colors border border-slate-700">Next →</a>
   {% endif %}
 </div>
 {% endif %}

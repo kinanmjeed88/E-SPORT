@@ -1,8 +1,8 @@
 name: E SPORT
 title: E SPORT
 description: The best source for E-Sports news.
-url: ""
-baseurl: ""
+url: "https://kinanmjeed88.github.io"
+baseurl: "/E-SPORT"
 paginate: 10
 paginate_path: "/page:num/"
 markdown: kramdown
