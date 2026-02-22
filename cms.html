@@ -103,7 +103,28 @@
                     <input type="file" id="site-logo" class="input-field" accept="image/*">
                 </div>
             </div>
-            <button onclick="updateSiteConfig()" class="btn btn-primary shadow-[0_0_15px_rgba(59,130,246,0.4)]">تحديث الإعدادات</button>
+            
+            <h3 class="text-lg font-bold text-blue-400 mb-4 mt-8 border-t border-slate-700 pt-6">روابط التواصل الاجتماعي (تظهر أسفل الموقع)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-slate-300">فيسبوك (Facebook)</label>
+                    <input type="url" id="site-facebook" placeholder="https://facebook.com/..." class="input-field" dir="ltr">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-slate-300">انستغرام (Instagram)</label>
+                    <input type="url" id="site-instagram" placeholder="https://instagram.com/..." class="input-field" dir="ltr">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-slate-300">تيك توك (TikTok)</label>
+                    <input type="url" id="site-tiktok" placeholder="https://tiktok.com/@..." class="input-field" dir="ltr">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium mb-2 text-slate-300">يوتيوب (YouTube)</label>
+                    <input type="url" id="site-youtube" placeholder="https://youtube.com/..." class="input-field" dir="ltr">
+                </div>
+            </div>
+
+            <button onclick="updateSiteConfig()" class="btn btn-primary shadow-[0_0_15px_rgba(59,130,246,0.4)] w-full md:w-auto">تحديث الإعدادات</button>
         </section>
 
         <!-- Post Creation -->
@@ -253,12 +274,23 @@
         async function fetchSiteConfig() {
             try {
                 const data = await githubRequest('_config.yml');
-                // Decode base64 properly supporting utf-8
                 const content = decodeURIComponent(escape(atob(data.content)));
+                
                 const titleMatch = content.match(/title:\s*(.*)/);
-                if (titleMatch) {
-                    document.getElementById('site-title').value = titleMatch[1].trim();
-                }
+                if (titleMatch) document.getElementById('site-title').value = titleMatch[1].trim();
+
+                const fbMatch = content.match(/facebook:\s*"(.*)"/);
+                if (fbMatch) document.getElementById('site-facebook').value = fbMatch[1].trim();
+
+                const igMatch = content.match(/instagram:\s*"(.*)"/);
+                if (igMatch) document.getElementById('site-instagram').value = igMatch[1].trim();
+
+                const ttMatch = content.match(/tiktok:\s*"(.*)"/);
+                if (ttMatch) document.getElementById('site-tiktok').value = ttMatch[1].trim();
+
+                const ytMatch = content.match(/youtube:\s*"(.*)"/);
+                if (ytMatch) document.getElementById('site-youtube').value = ytMatch[1].trim();
+
                 window.currentConfigSha = data.sha;
                 window.currentConfigContent = content;
             } catch (error) {
@@ -269,36 +301,60 @@
         window.updateSiteConfig = async function() {
             const newTitle = document.getElementById('site-title').value;
             const logoFile = document.getElementById('site-logo').files[0];
+            const fb = document.getElementById('site-facebook').value.trim();
+            const ig = document.getElementById('site-instagram').value.trim();
+            const tt = document.getElementById('site-tiktok').value.trim();
+            const yt = document.getElementById('site-youtube').value.trim();
 
             try {
                 showToast('جاري تحديث الإعدادات...', 'info');
 
                 let logoUrl = '';
-                // 1. Upload Logo if selected (with compression)
                 if (logoFile) {
-                    const logoBase64 = await compressImage(logoFile, 400, 0.9); // Small size for logo
+                    const logoBase64 = await compressImage(logoFile, 400, 0.9);
                     const safeLogoName = logoFile.name.replace(/[^a-zA-Z0-9.\-]/g, '_');
                     const logoPath = `assets/images/logo-${Date.now()}-${safeLogoName}`;
                     await uploadFile(logoPath, logoBase64, 'تحديث شعار الموقع');
                     logoUrl = `/${logoPath}`;
                 }
 
-                // 2. Update _config.yml
-                let newConfig = window.currentConfigContent;
-                if (newConfig) {
+                let newConfig = window.currentConfigContent || `title: ${newTitle}\n`;
+                
+                // Update Title
+                if (newConfig.includes('title:')) {
                     newConfig = newConfig.replace(/title: .*/, `title: ${newTitle}`);
-                    if (logoUrl) {
-                        if (newConfig.includes('logo:')) {
-                            newConfig = newConfig.replace(/logo: .*/, `logo: "${logoUrl}"`);
-                        } else {
-                            newConfig += `\nlogo: "${logoUrl}"\n`;
-                        }
-                    }
                 } else {
-                    newConfig = `title: ${newTitle}\n` + (logoUrl ? `logo: "${logoUrl}"\n` : '');
+                    newConfig += `\ntitle: ${newTitle}`;
                 }
 
-                // Encode supporting utf-8
+                // Update Logo
+                if (logoUrl) {
+                    if (newConfig.includes('logo:')) {
+                        newConfig = newConfig.replace(/logo: .*/, `logo: "${logoUrl}"`);
+                    } else {
+                        newConfig += `\nlogo: "${logoUrl}"`;
+                    }
+                }
+
+                // Helper function to update or add config keys
+                const updateOrAddKey = (key, value) => {
+                    if (value) {
+                        if (newConfig.includes(`${key}:`)) {
+                            newConfig = newConfig.replace(new RegExp(`${key}: .*`), `${key}: "${value}"`);
+                        } else {
+                            newConfig += `\n${key}: "${value}"`;
+                        }
+                    } else {
+                        // Remove key if empty
+                        newConfig = newConfig.replace(new RegExp(`\\n?${key}: .*`), '');
+                    }
+                };
+
+                updateOrAddKey('facebook', fb);
+                updateOrAddKey('instagram', ig);
+                updateOrAddKey('tiktok', tt);
+                updateOrAddKey('youtube', yt);
+
                 await uploadFile('_config.yml', btoa(unescape(encodeURIComponent(newConfig))), 'تحديث إعدادات الموقع', window.currentConfigSha);
                 
                 showToast('تم تحديث إعدادات الموقع بنجاح!');
@@ -329,7 +385,6 @@
             const safeDesc = description.replace(/"/g, '\\"');
             const safeExtLinkText = extLinkText.replace(/"/g, '\\"');
 
-            // Process YouTube URL to Embed URL
             let ytEmbed = "";
             if (rawYoutube) {
                 const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -337,7 +392,7 @@
                 if (match && match[2].length === 11) {
                     ytEmbed = "https://www.youtube.com/embed/" + match[2];
                 } else {
-                    ytEmbed = rawYoutube; // fallback
+                    ytEmbed = rawYoutube;
                 }
             }
 
@@ -345,16 +400,14 @@
                 showToast('جاري ضغط الصور ونشر المقال...', 'info');
 
                 let imageUrl = '';
-                // 1. Compress and Upload Image
                 if (imageFile) {
-                    const imageBase64 = await compressImage(imageFile, 1200, 0.8); // Max width 1200px, 80% quality
+                    const imageBase64 = await compressImage(imageFile, 1200, 0.8);
                     const safeImageName = imageFile.name.replace(/[^a-zA-Z0-9.\-]/g, '_');
                     const imagePath = `assets/images/${Date.now()}-${safeImageName}`;
                     await uploadFile(imagePath, imageBase64, `رفع صورة الغلاف للمقال: ${slug}`);
                     imageUrl = `/${imagePath}`;
                 }
 
-                // 2. Create Front Matter + Content
                 const date = new Date().toISOString().split('T')[0];
                 let fileContent = `---
 layout: post
@@ -369,13 +422,11 @@ image: "${imageUrl}"
                 
                 fileContent += `---\n\n${content}`;
 
-                // 3. Upload Post
                 const filename = `_posts/${date}-${slug}.md`;
                 await uploadFile(filename, btoa(unescape(encodeURIComponent(fileContent))), `نشر مقال جديد: ${title}`);
 
                 showToast('تم نشر المقال بنجاح! سيظهر على الموقع خلال ثوانٍ.');
                 
-                // Clear form
                 document.getElementById('post-title').value = '';
                 document.getElementById('post-slug').value = '';
                 document.getElementById('post-description').value = '';
@@ -395,7 +446,7 @@ image: "${imageUrl}"
         async function uploadFile(path, content, message, sha = null) {
             const body = {
                 message: message,
-                content: content // Content must be Base64 encoded (without data:image/... prefix)
+                content: content
             };
             if (sha) body.sha = sha;
 
@@ -409,7 +460,6 @@ image: "${imageUrl}"
             return githubRequest(path, 'PUT', body);
         }
 
-        // Image Compression using Canvas API
         function compressImage(file, maxWidth = 1200, quality = 0.8) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
@@ -432,7 +482,6 @@ image: "${imageUrl}"
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
 
-                        // Get base64 (remove the data:image/jpeg;base64, part for GitHub API)
                         const dataUrl = canvas.toDataURL('image/jpeg', quality);
                         resolve(dataUrl.split(',')[1]);
                     };

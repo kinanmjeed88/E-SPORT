@@ -11,4 +11,4 @@ future: true
 plugins:
   - jekyll-paginate
 
-logo: "/assets/images/logo-1771725763868-1000180155.jpg"
+logo: "/assets/images/logo.png"
