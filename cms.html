@@ -54,23 +54,44 @@
         .btn-primary:hover { background-color: #2563eb; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
         .btn-success { background-color: #10b981; color: white; }
         .btn-success:hover { background-color: #059669; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+        
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: bold;
+            color: #94a3b8;
+            background-color: #1e293b;
+            transition: all 0.3s;
+            white-space: nowrap;
+            border: 1px solid #334155;
+        }
+        .tab-btn:hover {
+            background-color: #334155;
+            color: white;
+        }
+        .tab-btn.active {
+            background-color: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+        }
     </style>
 </head>
 <body class="min-h-screen p-4 md:p-8">
 
     <div class="max-w-5xl mx-auto">
-        <header class="flex justify-between items-center mb-10 border-b border-gray-700 pb-6">
+        <header class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 border-b border-gray-700 pb-6">
             <h1 class="text-3xl md:text-4xl font-extrabold text-blue-500 tracking-tight">لوحة تحكم E SPORT</h1>
             <div id="connection-status" class="text-sm font-medium text-gray-400 bg-gray-800 px-4 py-2 rounded-full border border-gray-700">غير متصل</div>
         </header>
 
-        <!-- Connection Settings -->
-        <section id="settings-section" class="bg-slate-800/80 backdrop-blur-sm p-8 rounded-3xl shadow-2xl mb-8 border border-slate-700">
-            <h2 class="text-2xl font-bold mb-6 text-white flex items-center">
+        <!-- Connection Settings (Always visible if not connected) -->
+        <section id="settings-section" class="bg-slate-800/80 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-2xl mb-8 border border-slate-700">
+            <h2 class="text-xl md:text-2xl font-bold mb-6 text-white flex items-center">
                 <svg class="w-6 h-6 ml-3 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 إعدادات الاتصال (GitHub)
             </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div>
                     <label class="block text-sm font-medium mb-2 text-slate-300">اسم المستخدم</label>
                     <input type="text" id="gh-username" placeholder="مثال: kinanmjeed88" class="input-field">
@@ -87,100 +108,158 @@
             <button onclick="saveSettings()" class="btn btn-primary w-full text-lg shadow-[0_0_15px_rgba(59,130,246,0.4)]">حفظ واتصال</button>
         </section>
 
-        <!-- Site Management -->
-        <section id="site-config-section" class="bg-slate-800/80 backdrop-blur-sm p-8 rounded-3xl shadow-2xl mb-8 border border-slate-700 hidden">
-            <h2 class="text-2xl font-bold mb-6 text-white flex items-center">
-                <svg class="w-6 h-6 ml-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
-                إعدادات الموقع
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-slate-300">اسم الموقع</label>
-                    <input type="text" id="site-title" class="input-field">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-slate-300">صورة الموقع (الشعار الشخصي)</label>
-                    <input type="file" id="site-logo" class="input-field" accept="image/*">
-                </div>
-            </div>
+        <!-- Main CMS Interface (Hidden until connected) -->
+        <div id="cms-interface" class="hidden">
             
-            <h3 class="text-lg font-bold text-blue-400 mb-4 mt-8 border-t border-slate-700 pt-6">روابط التواصل الاجتماعي (تظهر أسفل الموقع)</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-slate-300">فيسبوك (Facebook)</label>
-                    <input type="url" id="site-facebook" placeholder="https://facebook.com/..." class="input-field" dir="ltr">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-slate-300">انستغرام (Instagram)</label>
-                    <input type="url" id="site-instagram" placeholder="https://instagram.com/..." class="input-field" dir="ltr">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-slate-300">تيك توك (TikTok)</label>
-                    <input type="url" id="site-tiktok" placeholder="https://tiktok.com/@..." class="input-field" dir="ltr">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-slate-300">يوتيوب (YouTube)</label>
-                    <input type="url" id="site-youtube" placeholder="https://youtube.com/..." class="input-field" dir="ltr">
-                </div>
+            <!-- Navigation Tabs -->
+            <div class="flex gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+                <button onclick="switchTab('create')" id="tab-create" class="tab-btn active shrink-0">إنشاء منشور</button>
+                <button onclick="switchTab('manage')" id="tab-manage" class="tab-btn shrink-0">إدارة المنشورات</button>
+                <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn shrink-0">إعدادات الموقع</button>
             </div>
 
-            <button onclick="updateSiteConfig()" class="btn btn-primary shadow-[0_0_15px_rgba(59,130,246,0.4)] w-full md:w-auto">تحديث الإعدادات</button>
-        </section>
-
-        <!-- Post Creation -->
-        <section id="post-section" class="bg-slate-800/80 backdrop-blur-sm p-8 rounded-3xl shadow-2xl border border-slate-700 hidden relative overflow-hidden">
-            <div class="absolute top-0 right-0 w-full h-2 bg-gradient-to-l from-green-400 to-blue-500"></div>
-            <h2 class="text-2xl font-bold mb-8 text-white flex items-center">
-                <svg class="w-6 h-6 ml-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                إنشاء منشور جديد
-            </h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-slate-300">عنوان المنشور</label>
-                    <input type="text" id="post-title" class="input-field" oninput="generateSlug()">
+            <!-- Site Management Tab -->
+            <section id="site-config-section" class="bg-slate-800/80 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-2xl mb-8 border border-slate-700 hidden">
+                <h2 class="text-xl md:text-2xl font-bold mb-6 text-white flex items-center">
+                    <svg class="w-6 h-6 ml-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    إعدادات الموقع
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">اسم الموقع</label>
+                        <input type="text" id="site-title" class="input-field">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">صورة الموقع (الشعار الشخصي)</label>
+                        <input type="file" id="site-logo" class="input-field" accept="image/*">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-slate-300">الرابط المخصص (يتم توليده تلقائياً)</label>
-                    <input type="text" id="post-slug" class="input-field" dir="ltr">
+                
+                <h3 class="text-lg font-bold text-blue-400 mb-4 mt-8 border-t border-slate-700 pt-6">روابط التواصل الاجتماعي</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">فيسبوك (Facebook)</label>
+                        <input type="url" id="site-facebook" placeholder="https://facebook.com/..." class="input-field" dir="ltr">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">انستغرام (Instagram)</label>
+                        <input type="url" id="site-instagram" placeholder="https://instagram.com/..." class="input-field" dir="ltr">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">تيك توك (TikTok)</label>
+                        <input type="url" id="site-tiktok" placeholder="https://tiktok.com/@..." class="input-field" dir="ltr">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">يوتيوب (YouTube)</label>
+                        <input type="url" id="site-youtube" placeholder="https://youtube.com/..." class="input-field" dir="ltr">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">تيليجرام (Telegram)</label>
+                        <input type="url" id="site-telegram" placeholder="https://t.me/..." class="input-field" dir="ltr">
+                    </div>
                 </div>
-            </div>
 
-            <div class="mb-6">
-                <label class="block text-sm font-medium mb-2 text-slate-300">وصف قصير (يظهر في البطاقة)</label>
-                <textarea id="post-description" class="input-field h-24 resize-none"></textarea>
-            </div>
+                <button onclick="updateSiteConfig()" class="btn btn-primary shadow-[0_0_15px_rgba(59,130,246,0.4)] w-full md:w-auto">تحديث الإعدادات</button>
+            </section>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-slate-300">صورة الغلاف (سيتم ضغطها تلقائياً)</label>
-                    <input type="file" id="post-image" class="input-field" accept="image/*">
+            <!-- Manage Posts Tab -->
+            <section id="manage-section" class="bg-slate-800/80 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-2xl mb-8 border border-slate-700 hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl md:text-2xl font-bold text-white flex items-center">
+                        <svg class="w-6 h-6 ml-3 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        إدارة المنشورات
+                    </h2>
+                    <button onclick="fetchPosts()" class="text-blue-400 hover:text-blue-300 text-sm font-bold flex items-center">
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        تحديث القائمة
+                    </button>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-slate-300">رابط يوتيوب (اختياري - يظهر كفيديو)</label>
-                    <input type="url" id="post-youtube" placeholder="https://youtube.com/watch?v=..." class="input-field" dir="ltr">
+                <div id="posts-list" class="space-y-3">
+                    <p class="text-slate-400 text-center py-8">جاري تحميل المنشورات...</p>
                 </div>
-            </div>
+            </section>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 p-6 bg-slate-900/50 rounded-2xl border border-slate-700">
-                <div class="col-span-2"><h3 class="text-lg font-bold text-blue-400 mb-2">إضافة رابط خارجي مميز (اختياري)</h3></div>
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-slate-300">الرابط (URL)</label>
-                    <input type="url" id="post-ext-link" placeholder="https://..." class="input-field" dir="ltr">
+            <!-- Post Creation Tab -->
+            <section id="post-section" class="bg-slate-800/80 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-2xl border border-slate-700 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-full h-2 bg-gradient-to-l from-green-400 to-blue-500"></div>
+                
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-xl md:text-2xl font-bold text-white flex items-center" id="post-form-title">
+                        <svg class="w-6 h-6 ml-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                        إنشاء منشور جديد
+                    </h2>
+                    <button onclick="resetForm()" id="cancel-edit-btn" class="hidden text-red-400 hover:text-red-300 text-sm font-bold">إلغاء التعديل</button>
                 </div>
-                <div>
-                    <label class="block text-sm font-medium mb-2 text-slate-300">نص الزر (مثال: اضغط هنا للتحميل)</label>
-                    <input type="text" id="post-ext-link-text" placeholder="اضغط هنا" class="input-field">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-4">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">عنوان المنشور</label>
+                        <input type="text" id="post-title" class="input-field" oninput="generateSlug()">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">الرابط المخصص (يتم توليده تلقائياً)</label>
+                        <input type="text" id="post-slug" class="input-field" dir="ltr">
+                    </div>
                 </div>
-            </div>
 
-            <div class="mb-8">
-                <label class="block text-sm font-medium mb-2 text-slate-300">محتوى المنشور (يدعم Markdown)</label>
-                <textarea id="post-content" class="input-field h-80 font-mono text-sm leading-relaxed" dir="auto"></textarea>
-            </div>
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-2 text-slate-300">وصف قصير (يظهر في البطاقة)</label>
+                    <textarea id="post-description" class="input-field h-24 resize-none"></textarea>
+                </div>
 
-            <button onclick="publishPost()" class="btn btn-success w-full text-xl py-4 shadow-[0_0_20px_rgba(16,185,129,0.4)]">نشر المنشور الآن</button>
-        </section>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">صورة الغلاف (سيتم ضغطها تلقائياً)</label>
+                        <input type="file" id="post-image" class="input-field" accept="image/*">
+                        <p id="current-image-hint" class="text-xs text-blue-400 hidden mt-1">يوجد صورة حالية. ارفع صورة جديدة لاستبدالها.</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">رابط يوتيوب (اختياري - يظهر كفيديو)</label>
+                        <input type="url" id="post-youtube" placeholder="https://youtube.com/watch?v=..." class="input-field" dir="ltr">
+                    </div>
+                </div>
+
+                <!-- Markdown Instructions -->
+                <div class="bg-slate-900/60 p-5 rounded-2xl border border-slate-700 mb-6 text-sm text-slate-300 shadow-inner">
+                    <h4 class="font-bold text-blue-400 mb-3 flex items-center">
+                        <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        تعليمات تنسيق النصوص (Markdown & HTML):
+                    </h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+                        <div class="flex justify-between border-b border-slate-800 pb-1"><span>لعنوان كبير:</span> <code class="text-emerald-400" dir="ltr"># النص هنا</code></div>
+                        <div class="flex justify-between border-b border-slate-800 pb-1"><span>لعنوان متوسط:</span> <code class="text-emerald-400" dir="ltr">## النص هنا</code></div>
+                        <div class="flex justify-between border-b border-slate-800 pb-1"><span>لنص أحمر:</span> <code class="text-red-400 text-xs" dir="ltr">&lt;span class="text-red-500"&gt;نص&lt;/span&gt;</code></div>
+                        <div class="flex justify-between border-b border-slate-800 pb-1"><span>لنص أزرق:</span> <code class="text-blue-400 text-xs" dir="ltr">&lt;span class="text-blue-500"&gt;نص&lt;/span&gt;</code></div>
+                        <div class="flex justify-between border-b border-slate-800 pb-1"><span>لنص أصفر:</span> <code class="text-yellow-400 text-xs" dir="ltr">&lt;span class="text-yellow-500"&gt;نص&lt;/span&gt;</code></div>
+                        <div class="flex justify-between border-b border-slate-800 pb-1"><span>سطر جديد:</span> <code class="text-slate-400 text-xs" dir="ltr">&lt;br&gt;</code></div>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-2 text-slate-300">محتوى المنشور الأساسي</label>
+                    <textarea id="post-content" class="input-field h-64 font-mono text-sm leading-relaxed" dir="auto"></textarea>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium mb-2 text-yellow-400">محتوى إضافي (يظهر أسفل المحتوى الأساسي في بطاقة صفراء شفافة)</label>
+                    <textarea id="post-additional-content" class="input-field h-32 font-mono text-sm leading-relaxed border-yellow-500/30 focus:border-yellow-500" dir="auto"></textarea>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 mb-8 p-6 bg-slate-900/50 rounded-2xl border border-slate-700">
+                    <div class="col-span-1 md:col-span-2"><h3 class="text-lg font-bold text-blue-400 mb-2">إضافة رابط خارجي مميز (اختياري)</h3></div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">الرابط (URL)</label>
+                        <input type="url" id="post-ext-link" placeholder="https://..." class="input-field" dir="ltr">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-300">نص الزر (مثال: اضغط هنا للتحميل)</label>
+                        <input type="text" id="post-ext-link-text" placeholder="اضغط هنا" class="input-field">
+                    </div>
+                </div>
+
+                <button id="publish-btn" onclick="publishPost()" class="btn btn-success w-full text-xl py-4 shadow-[0_0_20px_rgba(16,185,129,0.4)]">نشر المنشور الآن</button>
+            </section>
+        </div>
     </div>
 
     <!-- Toast Notification -->
@@ -201,6 +280,8 @@
             token: ''
         };
 
+        window.editingPost = null;
+
         // --- Initialization ---
         document.addEventListener('DOMContentLoaded', () => {
             loadSettings();
@@ -217,9 +298,12 @@
 
             if (state.username && state.repo && state.token) {
                 document.getElementById('connection-status').innerHTML = `<span class="text-green-400 flex items-center"><span class="w-2 h-2 bg-green-400 rounded-full ml-2 animate-pulse"></span> متصل بمستودع ${state.repo}</span>`;
-                document.getElementById('site-config-section').classList.remove('hidden');
-                document.getElementById('post-section').classList.remove('hidden');
+                document.getElementById('settings-section').classList.add('hidden');
+                document.getElementById('cms-interface').classList.remove('hidden');
                 fetchSiteConfig();
+            } else {
+                document.getElementById('settings-section').classList.remove('hidden');
+                document.getElementById('cms-interface').classList.add('hidden');
             }
         }
 
@@ -239,6 +323,26 @@
 
             loadSettings();
             showToast('تم حفظ الإعدادات والاتصال بنجاح!');
+        };
+
+        window.switchTab = function(tabName) {
+            // Update buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+
+            // Update sections
+            document.getElementById('site-config-section').classList.add('hidden');
+            document.getElementById('post-section').classList.add('hidden');
+            document.getElementById('manage-section').classList.add('hidden');
+
+            if (tabName === 'settings') {
+                document.getElementById('site-config-section').classList.remove('hidden');
+            } else if (tabName === 'create') {
+                document.getElementById('post-section').classList.remove('hidden');
+            } else if (tabName === 'manage') {
+                document.getElementById('manage-section').classList.remove('hidden');
+                fetchPosts();
+            }
         };
 
         window.generateSlug = function() {
@@ -291,6 +395,9 @@
                 const ytMatch = content.match(/youtube:\s*"(.*)"/);
                 if (ytMatch) document.getElementById('site-youtube').value = ytMatch[1].trim();
 
+                const tgMatch = content.match(/telegram:\s*"(.*)"/);
+                if (tgMatch) document.getElementById('site-telegram').value = tgMatch[1].trim();
+
                 window.currentConfigSha = data.sha;
                 window.currentConfigContent = content;
             } catch (error) {
@@ -305,6 +412,7 @@
             const ig = document.getElementById('site-instagram').value.trim();
             const tt = document.getElementById('site-tiktok').value.trim();
             const yt = document.getElementById('site-youtube').value.trim();
+            const tg = document.getElementById('site-telegram').value.trim();
 
             try {
                 showToast('جاري تحديث الإعدادات...', 'info');
@@ -320,14 +428,12 @@
 
                 let newConfig = window.currentConfigContent || `title: ${newTitle}\n`;
                 
-                // Update Title
                 if (newConfig.includes('title:')) {
                     newConfig = newConfig.replace(/title: .*/, `title: ${newTitle}`);
                 } else {
                     newConfig += `\ntitle: ${newTitle}`;
                 }
 
-                // Update Logo
                 if (logoUrl) {
                     if (newConfig.includes('logo:')) {
                         newConfig = newConfig.replace(/logo: .*/, `logo: "${logoUrl}"`);
@@ -336,7 +442,6 @@
                     }
                 }
 
-                // Helper function to update or add config keys
                 const updateOrAddKey = (key, value) => {
                     if (value) {
                         if (newConfig.includes(`${key}:`)) {
@@ -345,7 +450,6 @@
                             newConfig += `\n${key}: "${value}"`;
                         }
                     } else {
-                        // Remove key if empty
                         newConfig = newConfig.replace(new RegExp(`\\n?${key}: .*`), '');
                     }
                 };
@@ -354,14 +458,135 @@
                 updateOrAddKey('instagram', ig);
                 updateOrAddKey('tiktok', tt);
                 updateOrAddKey('youtube', yt);
+                updateOrAddKey('telegram', tg);
 
                 await uploadFile('_config.yml', btoa(unescape(encodeURIComponent(newConfig))), 'تحديث إعدادات الموقع', window.currentConfigSha);
                 
                 showToast('تم تحديث إعدادات الموقع بنجاح!');
-                fetchSiteConfig(); // Refresh SHA
+                fetchSiteConfig();
             } catch (error) {
                 showToast(`خطأ: ${error.message}`, 'error');
             }
+        };
+
+        // --- Post Management ---
+        
+        window.fetchPosts = async function() {
+            try {
+                const postsList = document.getElementById('posts-list');
+                postsList.innerHTML = '<p class="text-slate-400 text-center py-8">جاري تحميل المنشورات...</p>';
+                
+                const posts = await githubRequest('_posts');
+                postsList.innerHTML = '';
+                
+                if (!Array.isArray(posts) || posts.length === 0) {
+                    postsList.innerHTML = '<p class="text-slate-400 text-center py-8">لا توجد منشورات.</p>';
+                    return;
+                }
+                
+                // Sort descending
+                posts.sort((a, b) => b.name.localeCompare(a.name));
+
+                posts.forEach(post => {
+                    const div = document.createElement('div');
+                    div.className = 'bg-slate-900/50 p-4 rounded-xl border border-slate-700 flex justify-between items-center flex-wrap gap-4 hover:bg-slate-800 transition-colors';
+                    div.innerHTML = `
+                        <span class="text-white font-medium truncate flex-1" dir="ltr">${post.name}</span>
+                        <div class="flex gap-2 shrink-0">
+                            <button onclick="editPost('${post.name}', '${post.sha}')" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">تعديل</button>
+                            <button onclick="deletePost('${post.name}', '${post.sha}')" class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">حذف</button>
+                        </div>
+                    `;
+                    postsList.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+                document.getElementById('posts-list').innerHTML = `<p class="text-red-400 text-center py-8">خطأ في تحميل المنشورات: ${error.message}</p>`;
+            }
+        };
+
+        window.deletePost = async function(name, sha) {
+            if (!confirm(`هل أنت متأكد من حذف المنشور ${name}؟ لا يمكن التراجع عن هذا الإجراء.`)) return;
+            try {
+                showToast('جاري الحذف...', 'info');
+                await githubRequest(`_posts/${name}`, 'DELETE', {
+                    message: `حذف المنشور: ${name}`,
+                    sha: sha
+                });
+                showToast('تم الحذف بنجاح!');
+                fetchPosts();
+            } catch (error) {
+                showToast(`خطأ: ${error.message}`, 'error');
+            }
+        };
+
+        window.editPost = async function(name, sha) {
+            try {
+                showToast('جاري تحميل المنشور...', 'info');
+                const data = await githubRequest(`_posts/${name}`);
+                const content = decodeURIComponent(escape(atob(data.content)));
+                
+                const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+                if (match) {
+                    const frontMatter = match[1];
+                    const body = match[2].trim();
+                    
+                    let parsedYaml = {};
+                    try {
+                        parsedYaml = window.jsYaml.load(frontMatter);
+                    } catch (e) {
+                        console.error("YAML parsing error", e);
+                        showToast('خطأ في قراءة بيانات المنشور', 'error');
+                        return;
+                    }
+                    
+                    document.getElementById('post-title').value = parsedYaml.title || '';
+                    const slugMatch = name.match(/^\d{4}-\d{2}-\d{2}-(.*)\.md$/);
+                    document.getElementById('post-slug').value = slugMatch ? slugMatch[1] : '';
+                    
+                    document.getElementById('post-description').value = parsedYaml.description || '';
+                    document.getElementById('post-youtube').value = parsedYaml.youtube || '';
+                    document.getElementById('post-ext-link').value = parsedYaml.ext_link || '';
+                    document.getElementById('post-ext-link-text').value = parsedYaml.ext_link_text || '';
+                    document.getElementById('post-additional-content').value = parsedYaml.additional_content || '';
+                    document.getElementById('post-content').value = body || '';
+                    
+                    window.editingPost = { name, sha, date: parsedYaml.date, image: parsedYaml.image };
+                    
+                    document.getElementById('post-form-title').innerHTML = '<svg class="w-6 h-6 ml-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> تعديل المنشور';
+                    document.getElementById('publish-btn').textContent = 'تحديث المنشور';
+                    document.getElementById('publish-btn').classList.replace('btn-success', 'btn-primary');
+                    document.getElementById('cancel-edit-btn').classList.remove('hidden');
+                    
+                    if (parsedYaml.image) {
+                        document.getElementById('current-image-hint').classList.remove('hidden');
+                    }
+                    
+                    switchTab('create');
+                    showToast('تم تحميل المنشور للتعديل');
+                }
+            } catch (error) {
+                showToast(`خطأ: ${error.message}`, 'error');
+            }
+        };
+
+        window.resetForm = function() {
+            window.editingPost = null;
+            document.getElementById('post-title').value = '';
+            document.getElementById('post-slug').value = '';
+            document.getElementById('post-description').value = '';
+            document.getElementById('post-content').value = '';
+            document.getElementById('post-image').value = '';
+            document.getElementById('post-youtube').value = '';
+            document.getElementById('post-ext-link').value = '';
+            document.getElementById('post-ext-link-text').value = '';
+            document.getElementById('post-additional-content').value = '';
+            
+            document.getElementById('post-form-title').innerHTML = '<svg class="w-6 h-6 ml-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> إنشاء منشور جديد';
+            document.getElementById('publish-btn').textContent = 'نشر المنشور الآن';
+            document.getElementById('publish-btn').classList.replace('btn-primary', 'btn-success');
+            document.getElementById('cancel-edit-btn').classList.add('hidden');
+            document.getElementById('current-image-hint').classList.add('hidden');
         };
 
         window.publishPost = async function() {
@@ -369,6 +594,7 @@
             let slug = document.getElementById('post-slug').value;
             const description = document.getElementById('post-description').value;
             const content = document.getElementById('post-content').value;
+            const additionalContent = document.getElementById('post-additional-content').value;
             const imageFile = document.getElementById('post-image').files[0];
             
             const rawYoutube = document.getElementById('post-youtube').value;
@@ -381,9 +607,6 @@
             }
 
             slug = slug.trim().replace(/\s+/g, '-');
-            const safeTitle = title.replace(/"/g, '\\"');
-            const safeDesc = description.replace(/"/g, '\\"');
-            const safeExtLinkText = extLinkText.replace(/"/g, '\\"');
 
             let ytEmbed = "";
             if (rawYoutube) {
@@ -397,9 +620,9 @@
             }
 
             try {
-                showToast('جاري ضغط الصور ونشر المقال...', 'info');
+                showToast(window.editingPost ? 'جاري تحديث المقال...' : 'جاري ضغط الصور ونشر المقال...', 'info');
 
-                let imageUrl = '';
+                let imageUrl = window.editingPost ? window.editingPost.image : '';
                 if (imageFile) {
                     const imageBase64 = await compressImage(imageFile, 1200, 0.8);
                     const safeImageName = imageFile.name.replace(/[^a-zA-Z0-9.\-]/g, '_');
@@ -408,33 +631,48 @@
                     imageUrl = `/${imagePath}`;
                 }
 
-                const date = new Date().toISOString().split('T')[0];
-                let fileContent = `---
-layout: post
-title: "${safeTitle}"
-description: "${safeDesc}"
-date: ${date}
-image: "${imageUrl}"
-`;
-                if (ytEmbed) fileContent += `youtube: "${ytEmbed}"\n`;
-                if (extLink) fileContent += `ext_link: "${extLink}"\n`;
-                if (extLinkText) fileContent += `ext_link_text: "${safeExtLinkText}"\n`;
+                const date = window.editingPost ? window.editingPost.date : new Date().toISOString().split('T')[0];
                 
-                fileContent += `---\n\n${content}`;
+                const frontMatterObj = {
+                    layout: 'post',
+                    title: title,
+                    description: description,
+                    date: date,
+                };
+                if (imageUrl) frontMatterObj.image = imageUrl;
+                if (ytEmbed) frontMatterObj.youtube = ytEmbed;
+                if (extLink) frontMatterObj.ext_link = extLink;
+                if (extLinkText) frontMatterObj.ext_link_text = extLinkText;
+                if (additionalContent) frontMatterObj.additional_content = additionalContent;
+
+                const frontMatterStr = window.jsYaml.dump(frontMatterObj);
+                let fileContent = `---\n${frontMatterStr}---\n\n${content}`;
 
                 const filename = `_posts/${date}-${slug}.md`;
-                await uploadFile(filename, btoa(unescape(encodeURIComponent(fileContent))), `نشر مقال جديد: ${title}`);
-
-                showToast('تم نشر المقال بنجاح! سيظهر على الموقع خلال ثوانٍ.');
                 
-                document.getElementById('post-title').value = '';
-                document.getElementById('post-slug').value = '';
-                document.getElementById('post-description').value = '';
-                document.getElementById('post-content').value = '';
-                document.getElementById('post-image').value = '';
-                document.getElementById('post-youtube').value = '';
-                document.getElementById('post-ext-link').value = '';
-                document.getElementById('post-ext-link-text').value = '';
+                let shaToUpdate = null;
+                if (window.editingPost) {
+                    if (window.editingPost.name === `${date}-${slug}.md`) {
+                        shaToUpdate = window.editingPost.sha;
+                    } else {
+                        // Filename changed (slug changed), delete old file
+                        await githubRequest(`_posts/${window.editingPost.name}`, 'DELETE', {
+                            message: `حذف المنشور القديم بعد تغيير الرابط: ${window.editingPost.name}`,
+                            sha: window.editingPost.sha
+                        });
+                    }
+                }
+
+                await uploadFile(filename, btoa(unescape(encodeURIComponent(fileContent))), window.editingPost ? `تحديث مقال: ${title}` : `نشر مقال جديد: ${title}`, shaToUpdate);
+
+                showToast(window.editingPost ? 'تم تحديث المقال بنجاح!' : 'تم نشر المقال بنجاح! سيظهر على الموقع خلال ثوانٍ.');
+                
+                resetForm();
+                
+                // If we were editing, go back to manage tab to see updates
+                if (shaToUpdate || window.editingPost) {
+                    switchTab('manage');
+                }
 
             } catch (error) {
                 showToast(`خطأ: ${error.message}`, 'error');
