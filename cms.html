@@ -267,10 +267,8 @@
         إشعار
     </div>
 
-    <script type="module">
-        import jsYaml from 'js-yaml';
-        window.jsYaml = jsYaml;
-    </script>
+    <!-- js-yaml from CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
 
     <script>
         // --- State Management ---
@@ -533,7 +531,7 @@
                     
                     let parsedYaml = {};
                     try {
-                        parsedYaml = window.jsYaml.load(frontMatter);
+                        parsedYaml = jsyaml.load(frontMatter);
                     } catch (e) {
                         console.error("YAML parsing error", e);
                         showToast('خطأ في قراءة بيانات المنشور', 'error');
@@ -645,7 +643,7 @@
                 if (extLinkText) frontMatterObj.ext_link_text = extLinkText;
                 if (additionalContent) frontMatterObj.additional_content = additionalContent;
 
-                const frontMatterStr = window.jsYaml.dump(frontMatterObj);
+                const frontMatterStr = jsyaml.dump(frontMatterObj);
                 let fileContent = `---\n${frontMatterStr}---\n\n${content}`;
 
                 const filename = `_posts/${date}-${slug}.md`;

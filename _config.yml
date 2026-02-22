@@ -1,5 +1,5 @@
 name: E SPORT
-title: E SPORT ✅
+title: E SPORT
 description: The best source for E-Sports news.
 url: "https://kinanmjeed88.github.io"
 baseurl: "/E-SPORT"
@@ -11,10 +11,4 @@ future: true
 plugins:
   - jekyll-paginate
 
-logo: "/assets/images/logo-1771729832321-1000180155.jpg"
-
-facebook: "www.facebook.com"
-instagram: "www.facebook.com"
-tiktok: "www.facebook.com"
-youtube: "www.facebook.com"
-telegram: "https://t.me/techtouch7"
+logo: "/assets/images/logo.png"
